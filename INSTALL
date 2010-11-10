@@ -1,0 +1,11 @@
+
+Installation
+------------
+
+1. Copy the entire tttp_listing into your modules directory .
+
+2. Log in to your site as an administrator, and go to the Administer >> Site building >> Modules
+   section. Enable  the tttp_listing module.
+   
+
+

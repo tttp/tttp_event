@@ -1,0 +1,76 @@
+<?php
+
+/*
+ +--------------------------------------------------------------------+
+ +--------------------------------------------------------------------+
+ | Copyright Tech To The People (c) 2010                              |
+ +--------------------------------------------------------------------+
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+function tttp_listing_civicrm_buildForm ( $formName, &$form ) {
+  if ($formName  == "CRM_Event_Form_Search") {
+    $tabletool="/".drupal_get_path('module', 'civi_export'). "/tabletools/media";
+
+    $template = CRM_Core_Smarty::singleton( );
+
+    $template->assign ("tabletool",$tabletool);
+    $dir = dirname(__FILE__). "/templates/";
+    array_unshift ( $template->template_dir,$dir);
+    $rows = &$template->get_template_vars('rows');
+    if ($rows) {
+      $lastEvent = $rows[0]['event_id'];
+      $paidEvent =  $rows[0]['paid'];
+      $uniqueEvent = true;
+      foreach ( $rows as &$row) {
+        if ($lastEvent != $row['event_id']) {
+          $paidEvent =  $paidEvent || $rows[0]['paid'];
+          $uniqueEvent = false;
+        }
+        $cids [] =$row['contact_id'];  
+      }
+      if ( $_GET['q'] != 'civicrm/event/search') {// only participant listing, not event list of a contact
+        //$template->assign_by_ref ('rows',$rows);
+        $template->assign ('displayFee',$paidEvent);
+        $template->assign ('displayEvent',true);
+        return;
+      }
+      $sql = "select civicrm_contact.id as contact_id, civicrm_contact.employer_id, civicrm_contact.organization_name as employer, civicrm_country.id as country_id, civicrm_country.name as country from civicrm_contact left join civicrm_address on civicrm_contact.id=  contact_id left join  civicrm_country on  civicrm_country.id = civicrm_address.country_id  where civicrm_contact.id in ( ". implode(', ', $cids) ." );";
+      $dao = CRM_Core_DAO::executeQuery( $sql );
+      $contacts = array ();
+      while ($dao->fetch( ) ) {
+        $a= $dao->toArray();
+        $contacts[$a['contact_id']] = $a;
+      }
+      foreach ( $rows as &$row) {
+        $cid = $row['contact_id'];
+        $row = array_merge ($row,$contacts [$cid]);
+      }
+      $template->assign_by_ref ('rows',$rows);
+      $template->assign ('displayFee',$paidEvent);
+      $template->assign ('displayEvent',!$uniqueEvent);
+    } else {// we try to get rid of the pagination
+
+      if (method_exists ($form,'setLimit')) {
+        $form->setLimit(400);
+        return;
+      }
+    }
+  }
+}

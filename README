@@ -1,0 +1,12 @@
+Put different info on the participants listing.
+
+Avoid columns that don't provide any information
+- don't waste 2 columns displaying info about the event when you are displaying the participants of an event 
+- don't display 2 price related columns if the events are free
+
+- add the country and organisation in the listing
+- provide a way to search fast in the list of participants (eg all the Dave, the ones from france...)
+- to change the status (ajax)
+- and generate a name badge directly
+
+Xavier

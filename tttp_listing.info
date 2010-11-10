@@ -1,0 +1,8 @@
+name = Live event participant listing
+description = If you event needs to distribute badges, track who is attended, try this, it's providing a simple interface to udpate the participant status without having to reload any page
+version = 1.0
+dependencies[] = civicrm
+dependencies[] = civi_export
+package = CiviCRM
+core = 6.x
+php = 5.2
