@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div id="restmsg"></div>
 {if $context EQ 'Search'}
     {include file="CRM/common/pager.tpl" location="top"}
 {/if}
@@ -33,6 +34,34 @@
 <script>
   TableToolsInit.sSwfPath = '{$tabletool}/swf/ZeroClipboard.swf'; 
 {literal}
+   function participantChangeStatus (fromStatus,toStatus,name) {
+    
+    cj("td.crm-participant-status_"+fromStatus)
+    .attr("title","Change status to "+name)
+    .css("cursor","pointer")
+    .live('click', function () {
+      $(this).html ("<i>saving...</i>");
+      aid=$(this).parent("tr").attr('id');
+      var id = aid.replace("crm-participant_", "");
+      cj().crmAPI ('participant','update',{id:id,status_id:toStatus}, 
+       {callBack: function(result,settings){
+          if (result.is_error == 1) {
+            $(settings.msgbox)
+            .addClass('msgnok')
+            .html(result.error_message);
+            return false;
+          } else {
+            $('#crm-participant_'+id)
+            .find('td.crm-participant-status_'+fromStatus)
+            .removeClass('crm-participant-status_'+fromStatus)
+            .addClass('crm-participant-status_'+toStatus)
+            .html(name); 
+          }
+        }
+       });
+    });
+   }
+
    $(function($){
       var aoColumns = [];
       $('table.selector thead th').each(function (){
@@ -51,32 +80,14 @@
            'aoColumns': aoColumns  }); 
 
     $("a.action-badge").click (function(){
-      $(this).attr({ target: "_blank" });
+      $(this).attr({ target: "_blank" }).parents('tr').find('td.crm-participant-status').html('Badged');
+//return false;
       return true;
     });
-    $("td.crm-participant_participant_status-1")
-    .attr("title","Change the status to completed")
-    .css("cursor","pointer")
-    .click (function () {
-      aid=$(this).parent("tr").attr('id');
-      var activity_id = aid.replace("crm-activity_", "");
-      cj().crmAPI ('activity','update',{id:activity_id,status_id:2}, 
-       {callBack: function(result,settings){
-          if (result.is_error == 1) {
-            $(settings.msgbox)
-            .addClass('msgnok')
-            .html(result.error_message);
-            return false;
-          } else {
-            $('#crm-activity_'+activity_id)
-            .find('td.crm-activity-status_1')
-            .removeClass('crm-activity-status_1')
-            .addClass('crm-activity-status_2')
-            .html("Completed"); 
-          }
-        }
-       });
-    });
+   //participantChangeStatus (1,2,"Attended");
+   participantChangeStatus (2,1,"Registered");
+   participantChangeStatus (1,4,"Cancelled");
+   participantChangeStatus (4,1,"Registered");
 
    });
  </script>
@@ -122,7 +133,7 @@
     {/foreach*}
     </tr>
  </thead>
-
+<tbody>
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
   <tr id='crm-participant_{$row.participant_id}' class="{cycle values="odd-row,even-row"} crm-event crm-event_{$row.event_id}">
@@ -163,25 +174,28 @@
         <td class="right nowrap crm-paticipant-participant_fee_amount">{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
     {/if}
     <td class="crm-participant-register_date">{$row.participant_register_date|truncate:10:''|crmDate}</td>	
-    <td class="crm-participant-status crm-participant_status_id-{$row.participant_status_id}">{$row.participant_status}</td>
+    <td class="crm-participant-status crm-participant-status_{$row.participant_status_id}">{$row.participant_status}</td>
     <td class="crm-participant-participant_role">{$row.participant_role_id}</td>
     <td><a title="Print Event Name Badge" class="action-item action-badge" href="{crmURL p='civicrm/event/badge' q="context=view&reset=1&cid=`$row.contact_id`&id=`$participant_id`"}"><span class="icon print-icon"></span></a>  
 {$row.action|replace:'xx':$participant_id}</td>
    </tr>
   {/foreach}
+</tbody>
+</table>
 {* Link to "View all participants" for Dashboard and Contact Summary *}
 {if $limit and $pager->_totalItems GT $limit }
+<table>
   {if $context EQ 'event_dashboard' }
     <tr class="even-row">
     <td colspan="10"><a href="{crmURL p='civicrm/event/search' q='reset=1'}">&raquo; {ts}Find more event participants{/ts}...</a></td></tr>
     </tr>
   {elseif $context eq 'participant' }  
     <tr class="even-row">
-    <td colspan="7"><a href="{crmURL p='civicrm/contact/view' q="reset=1&force=1&selectedChild=participant&cid=$contactId"}">&raquo; {ts}View all events for this contact{/ts}...</a></td></tr>
+    <td colspan="7"><a href="{crmURL p='civicrm/contact/view' q="reset=1&force=1&selectedChild=participant&cid=$contactId"}">&raquo; {ts}View all events for this contact{/ts}...</a></td>
     </tr>
   {/if}
-{/if}
 </table>
+{/if}
 {/strip}
 
 {if $context EQ 'Search'}
@@ -195,3 +209,4 @@
 {if $context EQ 'Search'}
     {include file="CRM/common/pager.tpl" location="bottom"}
 {/if}
+
