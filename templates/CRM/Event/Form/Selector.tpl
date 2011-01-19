@@ -81,7 +81,6 @@
 
     $("a.action-badge").click (function(){
       $(this).attr({ target: "_blank" }).parents('tr').find('td.crm-participant-status').html('Badged');
-//return false;
       return true;
     });
    //participantChangeStatus (1,2,"Attended");
@@ -176,7 +175,7 @@
     <td class="crm-participant-register_date">{$row.participant_register_date|truncate:10:''|crmDate}</td>	
     <td class="crm-participant-status crm-participant-status_{$row.participant_status_id}">{$row.participant_status}</td>
     <td class="crm-participant-participant_role">{$row.participant_role_id}</td>
-    <td><a title="Print Event Name Badge" class="action-item action-badge" href="{crmURL p='civicrm/event/badge' q="context=view&reset=1&cid=`$row.contact_id`&id=`$participant_id`"}"><span class="icon print-icon"></span></a>  
+    <td><a title="Print Event Name Badge id{$row.participant_id}" class="action-item action-badge" href="{crmURL p='civicrm/event/badge' q="context=view&reset=1&cid=`$row.contact_id`&id=`$participant_id`"}"><span class="icon print-icon"></span></a>  
 {$row.action|replace:'xx':$participant_id}</td>
    </tr>
   {/foreach}
@@ -184,6 +183,8 @@
 </table>
 {* Link to "View all participants" for Dashboard and Contact Summary *}
 {if $limit and $pager->_totalItems GT $limit }
+
+
 <table>
   {if $context EQ 'event_dashboard' }
     <tr class="even-row">
