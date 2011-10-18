@@ -24,6 +24,82 @@
  +--------------------------------------------------------------------+
 */
 
+function tttp_listing_menu() {
+
+    $items['civicrm/event/live'] = array(
+                                                   'title' => t('CiviCRM Event live management'),
+    'page callback' => 'tttp_listing_event_live',
+    'access arguments' => array('access CiviCRM'),
+    'type' => MENU_CALLBACK
+//                                                   'type' => MENU_NORMAL_ITEM,
+                                                   );
+    $items['civicrm/event/live/%event'] = array(
+
+      'title' => t('CiviCRM Event live management'),
+     'page arguments' => array(2),
+
+    'page callback' => 'tttp_listing_event_live',
+    'access arguments' => array('access CiviCRM'),
+    'type' => MENU_CALLBACK
+//                                                   'type' => MENU_NORMAL_ITEM,
+                                                   );
+    return $items;
+
+}
+
+function tttp_listing_event_live ($event_id = null) {
+  error_reporting(E_ALL & ~E_NOTICE);
+
+  //drupal_add_js(drupal_get_path('module', 'civicrm') . '/../css/deprecate.css');
+//<script type="text/javascript" src="/sites/all/modules/civicrm/drupal/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js?j"></script>
+//<script type="text/javascript" src="/sites/all/modules/civicrm/drupal/../packages/jquery/plugins/jquery.autocomplete.js?j"></script>
+  drupal_add_css(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.11.custom.css');
+
+  drupal_add_js(drupal_get_path('module', 'civicrm') . '/../js/rest.js');
+  drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
+
+  drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js');
+
+  civicrm_initialize();
+  $smarty = new CRM_Core_Smarty();
+  $smarty->template_dir = array( $smarty->template_dir,  dirname(__FILE__) ."/templates" );
+
+  require_once("api/class.api.php");
+  $api= new civicrm_api3();
+  $event_id=$event_id + 0;
+  if ($event_id ==0) {
+    die (" civicrm/event/live/{event_id}");
+  }
+  if (!$api->Event->GetSingle ($event_id)){
+    die ("FATAL: ".$api->attr('error_message'));
+  }
+  drupal_set_title($api->attr('title'));
+  $smarty->assign('event',$api->result());
+  if (!$api->Participant->Get(array('event_id'=>$event_id, 'option.limit'=>10000))){
+    die ("FATAL: ".$api->attr('error_message'));
+  }
+$people = $api->values();
+$participants =array();
+foreach ($people as $v) {
+  $participants[] = array ('id'=>$v->id,'status_id'=>$v->participant_status_id,'contact_id'=>$v->contact_id,'value'=>$v->sort_name, 'display_name'=>$v->display_name);
+}
+//print_r($participants);
+  $smarty->assign('total',count($people));
+  $smarty->assign('participants_json',json_encode($participants));
+  return $smarty->fetch ('CRM/Event/Page/live.tpl');
+
+  print_r ($api->result());
+  print_r($event_id);
+die ("here be dragons $event_id");
+}
+
+function noktttp_listing_civicrm_tokenValues( &$values, &$contactIDs ) {
+print_r($contactIDs);
+print_r(&$values);
+die ("toto");
+}
+
+
 function tttp_listing_civicrm_buildForm ( $formName, &$form ) {
   if ($formName  == "CRM_Event_Form_Search") {
     $tabletool="/".drupal_get_path('module', 'civi_export'). "/tabletools/media";
