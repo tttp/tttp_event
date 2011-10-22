@@ -59,6 +59,7 @@ function tttp_listing_event_live ($event_id = null) {
   drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
 
   drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js');
+  drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/jquery.ui.autocomplete.js');
 
   civicrm_initialize();
   $smarty = new CRM_Core_Smarty();
@@ -70,22 +71,28 @@ function tttp_listing_event_live ($event_id = null) {
   if ($event_id ==0) {
     die (" civicrm/event/live/{event_id}");
   }
+  if (!$api->OptionGroup->GetSingle (array('name'=>'participant_role'))){
+    die ("FATAL: ".$api->attr('error_message'));
+  }
+  $role_group = $api->attr('id');
+  if (!$api->OptionValue->Get (array('option_group_id'=>$role_group))){
+    die ("FATAL: ".$api->attr('error_message'));
+  }
+  $smarty->assign('role',$api->values());
   if (!$api->Event->GetSingle ($event_id)){
     die ("FATAL: ".$api->attr('error_message'));
   }
   drupal_set_title($api->attr('title'));
   $smarty->assign('event',$api->result());
-  if (!$api->Participant->Get(array('event_id'=>$event_id, 'option.limit'=>10000))){
+  //if (!$api->Participant->Get(array('event_id'=>$event_id, 'option.limit'=>10000))){
+  if (!$api->Participant->GetFull(array('event_id'=>$event_id, 'option.limit'=>10000))){
     die ("FATAL: ".$api->attr('error_message'));
   }
 $people = $api->values();
 $participants =array();
-foreach ($people as $v) {
-  $participants[] = array ('id'=>$v->id,'status_id'=>$v->participant_status_id,'contact_id'=>$v->contact_id,'value'=>$v->sort_name, 'display_name'=>$v->display_name);
-}
 //print_r($participants);
   $smarty->assign('total',count($people));
-  $smarty->assign('participants_json',json_encode($participants));
+  $smarty->assign('participants_json',json_encode($people));
   return $smarty->fetch ('CRM/Event/Page/live.tpl');
 
   print_r ($api->result());
@@ -100,52 +107,3 @@ die ("toto");
 }
 
 
-function tttp_listing_civicrm_buildForm ( $formName, &$form ) {
-  if ($formName  == "CRM_Event_Form_Search") {
-    $tabletool="/".drupal_get_path('module', 'civi_export'). "/tabletools/media";
-
-    $template = CRM_Core_Smarty::singleton( );
-
-    $template->assign ("tabletool",$tabletool);
-    $dir = dirname(__FILE__). "/templates/";
-    array_unshift ( $template->template_dir,$dir);
-    $rows = &$template->get_template_vars('rows');
-    if ($rows) {
-      $lastEvent = $rows[0]['event_id'];
-      $paidEvent =  $rows[0]['paid'];
-      $uniqueEvent = true;
-      foreach ( $rows as &$row) {
-        if ($lastEvent != $row['event_id']) {
-          $paidEvent =  $paidEvent || $rows[0]['paid'];
-          $uniqueEvent = false;
-        }
-        $cids [] =$row['contact_id'];  
-      }
-      if ( $_GET['q'] != 'civicrm/event/search') {// only participant listing, not event list of a contact
-        //$template->assign_by_ref ('rows',$rows);
-        $template->assign ('displayFee',$paidEvent);
-        $template->assign ('displayEvent',true);
-        return;
-      }
-      $sql = "select civicrm_contact.id as contact_id, civicrm_contact.employer_id, civicrm_contact.organization_name as employer, civicrm_country.id as country_id, civicrm_country.name as country from civicrm_contact left join civicrm_address on civicrm_contact.id=  contact_id left join  civicrm_country on  civicrm_country.id = civicrm_address.country_id  where civicrm_contact.id in ( ". implode(', ', $cids) ." );";
-      $dao = CRM_Core_DAO::executeQuery( $sql );
-      $contacts = array ();
-      while ($dao->fetch( ) ) {
-        $a= $dao->toArray();
-        $contacts[$a['contact_id']] = $a;
-      }
-      foreach ( $rows as &$row) {
-        $cid = $row['contact_id'];
-        $row = array_merge ($row,$contacts [$cid]);
-      }
-      $template->assign_by_ref ('rows',$rows);
-      $template->assign ('displayFee',$paidEvent);
-      $template->assign ('displayEvent',!$uniqueEvent);
-    } else {// we try to get rid of the pagination
-      if (method_exists ($form,'setLimit')) {
-        $form->setLimit(400);
-        return;
-      }
-    }
-  }
-}
