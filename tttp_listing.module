@@ -24,6 +24,13 @@
  +--------------------------------------------------------------------+
  */
 
+function tttp_listing_civicrm_config(&$config) {
+//  die ("test");
+  $path = drupal_get_path('module', 'tttp_listing');
+  // we put our module before civicrm, so in case of conflict in between the core and us, we win
+      set_include_path($path .  PATH_SEPARATOR .get_include_path() );
+}
+
 function tttp_listing_menu() {
 
   $items['civicrm/event/live'] = array(
