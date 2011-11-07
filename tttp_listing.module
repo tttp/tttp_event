@@ -25,11 +25,9 @@
  */
 
 function tttp_listing_civicrm_config(&$config) {
-  //$folder= '/'. drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11';
   $folder= drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.5';
   // 3.3.5 or so (at least < 3.4)
   $config->old = file_exists ($_SERVER{'DOCUMENT_ROOT'} . $folder);
-//  die ("exists ".$_SERVER{'DOCUMENT_ROOT'} . $folder  . ' -> '. file_exists ($_SERVER{'DOCUMENT_ROOT'} . $folder) ."AAAA" );
   $path = drupal_get_path('module', 'tttp_listing');
   // we put our module before civicrm, so in case of conflict in between the core and us, we win
   set_include_path($path .  PATH_SEPARATOR .get_include_path() );
@@ -60,9 +58,11 @@ function tttp_listing_menu() {
 }
 
 function tttp_listing_event_live ($event_id = null) {
+  error_reporting(E_ALL & ~E_NOTICE);
 
   civicrm_initialize();
   $config =& CRM_Core_Config::singleton();
+  drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
   if ($config->old) {
     drupal_add_css(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.5.custom.css');
     drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.5.custom.min.js');
@@ -75,9 +75,7 @@ function tttp_listing_event_live ($event_id = null) {
   }
 
   drupal_add_js(drupal_get_path('module', 'civicrm') . '/../js/rest.js');
-  drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
 
-  error_reporting(E_ALL & ~E_NOTICE);
 
   //drupal_add_js(drupal_get_path('module', 'civicrm') . '/../css/deprecate.css');
   //<script type="text/javascript" src="/sites/all/modules/civicrm/drupal/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js?j"></script>

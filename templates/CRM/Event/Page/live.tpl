@@ -16,10 +16,13 @@ text-align:left;z-index:10;position:absolute;}
 #editor {position:absolute;top:0;left:400px}
 .live_event {position:relative;}
 #crm-container .ac_input {width:10em}
+.ui-widget-content {background:white}
+
+#crm-container .crm-actions-ribbon li {padding:2px 10px;}
 
 #wrapper {height:100%;width:100%;border:1px solid pink;}
 
-
+@media print {
 	* { visibility:hidden;color:yellow;position:inherit;text-shadow:none;}
   .crm-button {border:none!important;}
 
@@ -34,7 +37,6 @@ h1 {text-shadow:none;}
 #badge * {display:block;visibility:visible;color:black;margin:0;}
 
 #wrapper {height:297mm;width:210mm; border:2px solid green;left:0;top:0;}
-@media print {
 }
 
 .status_1 {}
@@ -47,7 +49,7 @@ var event_id={$event->id};
 {literal}
 jQuery(function($){
 
-  var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id'];
+  var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id','address_id'];
 
      //label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
   participants = $.map( participants, function( item ){ 
@@ -89,6 +91,10 @@ $('#editor').submit(function() {
  cj().crmAPI('contact','create',values,
   {'callBack': function(re,opt){
      var contact_id=re.id;
+     var participant_id=$('#id').val();
+     if (participant_id) {
+       return;
+     }
      cj().crmAPI('participant','create',{'event_id': event_id, 'contact_id':contact_id,'status_id':2,'role_id':$('#role_id').val()},
      {'callBack': function(re,opt){
         $('#id').val(re.id);
@@ -119,6 +125,11 @@ $('#role_id').change(function(){
 });
 $('#country_id').change(function(){
  $('#badge_country').html($('#country_id option:selected').text());
+ var address_id = $('#address_id').val();
+ if (address_id) 
+   cj().crmAPI('Address','update',{'id':address_id,'country_id':$('#country_id').val()});
+ else 
+   $('#restmsg').html('Country not saved');
 }); 
 
 $('#last_name').blur(function() {
@@ -130,7 +141,7 @@ $('#last_name').blur(function() {
        $('#found_contacts').show();
        html ='';
        $.each(result.values, function(k,v){
-          html = html + "<li data-contact_id='"+v.contact_id+"' data-country_id='"+v.country_id+"'><span class='last_name'>"+v.last_name
+          html = html + "<li data-contact_id='"+v.contact_id+"' data-address_id='"+v.address_id+ "' data-country_id='"+v.country_id+"'><span class='last_name'>"+v.last_name
   +"</span>, <span class='first_name'>"+v.first_name + '</span> <span class="organization_name">'+ v.current_employer
   +'</span></li>';
 //        	$( "#"+v ).val( ui.item[v] )
@@ -139,6 +150,7 @@ $('#last_name').blur(function() {
        $('#list_contact li').click(function(){
          $('#contact_id').val($(this).data('contact_id'));
          $('#country_id').val($(this).data('country_id'));
+         $('#address_id').val($(this).data('address_id'));
          $('#first_name').val($(this).find('.first_name').text());
          $('#last_name').val($(this).find('.last_name').text());
          $('#organization_name').val($(this).find('.organization_name').text());
@@ -168,7 +180,7 @@ $('#found_contacts').hide();
 name 
 	<input name="participant" id="participant" class="ac_input" />
 ({$total} participants)
-<input id="id" type="" value="" class="dyn-field">
+<input id="id" type="hidden" value="" class="dyn-field">
 	</div>
 	<ul class='crm-actions-ribbon'><li class='crm-button live-attended'><span>Attended!</span></li>
 	<li  class='crm-button live-print'><span>Print</span></li>
@@ -190,7 +202,8 @@ name
 
 
 <form id="editor">
-<input id="contact_id" class="dyn-field" />
+<input id="contact_id" type="hidden" class="dyn-field" />
+<input name="address" id="address_id" class="adyn-field" />
 <label>Last name</label>
 <input id="last_name" class="dyn-field"/>
 <div id="found_contacts">Is this the contact?<ul id="list_contact"></ul></div>
