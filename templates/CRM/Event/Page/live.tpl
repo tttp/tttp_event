@@ -1,15 +1,40 @@
 {literal}
 <style>
-#badge {border:1px solid;width:100mm;height:70mm;position:relative;margin-top:10mm}
-#display_name {font-size:20px;margin-top:20mm;text-align:center;}
-#second{font-size:15px;;margin-top:10mm;text-align:center;}
+#badge {border:1px solid;width:97mm;height:86mm;position:relative;margin-top:10mm;
+}
+#badge .background {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1}
+
+
+
+#display_name {display:absolute;font-size:20px;margin-top:20mm;text-align:left;z-index:10;position:relative;
+left:10mm;top:30mm;
+}
+#second{font-size:15px;top:60mm;
+left:10mm;
+text-align:left;z-index:10;position:absolute;}
 #editor input {display:block;}
 #editor {position:absolute;top:0;left:400px}
 .live_event {position:relative;}
 #crm-container .ac_input {width:10em}
+
+#wrapper {height:100%;width:100%;border:1px solid pink;}
+
+
+	* { visibility:hidden;color:yellow;position:inherit;text-shadow:none;}
+  .crm-button {border:none!important;}
+
+h1 {text-shadow:none;}
+
+  #logo {display:none;}
+  #wrapper {position:inherit;}
+
+  input {display:none;visibility:hidden;}
+/* 297-86 -10 = 201mm */
+   #badge {display:block;position:absolute;top:201mm;left:0;visibility:visible;}
+#badge * {display:block;visibility:visible;color:black;margin:0;}
+
+#wrapper {height:297mm;width:210mm; border:2px solid green;left:0;top:0;}
 @media print {
-	* { display:hidden; }
-#badge {display:block;}
 }
 
 .status_1 {}
@@ -156,8 +181,11 @@ name
 </select></li>
 </ul>
 <div id="badge">
-<div id="display_name"><span id="badge_first_name"></span> <span id="badge_last_name"></span></div>
-<div id="second"><span id="badge_organization_name"></span> ,<span id="badge_country"></span></div>
+
+<img class='background' src='/{$tttp_root}/images/Badge/participant.jpg' />
+
+<div id="display_name"><span id="badge_first_name">AAA</span> <span id="badge_last_name"></span></div>
+<div id="second"><span id="badge_organization_name">BB</span> ,<span id="badge_country"></span></div>
 </div>
 
 

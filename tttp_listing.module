@@ -68,6 +68,7 @@ function tttp_listing_event_live ($event_id = null) {
   drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js');
   drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/jquery.ui.autocomplete.js');
 
+
   civicrm_initialize();
   $smarty = new CRM_Core_Smarty();
   $smarty->template_dir = array( $smarty->template_dir,  dirname(__FILE__) ."/templates" );
@@ -98,6 +99,7 @@ function tttp_listing_event_live ($event_id = null) {
   $people = $api->values();
   $smarty->assign('total',count($people));
   $smarty->assign('participants_json',json_encode($people));
+  $smarty->assign('tttp_root', drupal_get_path('module', 'tttp_listing') );
   return $smarty->fetch ('CRM/Event/Page/live.tpl');
 
 }
