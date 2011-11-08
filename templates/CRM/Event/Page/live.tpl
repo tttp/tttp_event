@@ -1,6 +1,7 @@
 {literal}
 <style>
-#badge {border:1px solid;width:97mm;height:86mm;position:relative;margin-top:10mm;
+#badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:100px;
+left:500px;
 }
 #badge .background {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1}
 
@@ -13,9 +14,9 @@ left:10mm;top:30mm;
 left:10mm;
 text-align:left;z-index:10;position:absolute;}
 #editor input {display:block;}
-#editor {position:absolute;top:0;left:400px}
+#editor {position:absolute;top:100px;left:0px}
 .live_event {position:relative;}
-#crm-container .ac_input {width:10em}
+#crm-container .ac_input {width:10em;z-index:20}
 .ui-widget-content {background:white}
 
 #crm-container .crm-actions-ribbon li {padding:2px 10px;}
@@ -46,6 +47,10 @@ h1 {text-shadow:none;}
 <script>
 var participants={$participants_json};
 var event_id={$event->id};
+var options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
+       ,closetxt:'<div class="ui-icon ui-icon-close" style="float:left"></div>'{rdelim};
+
+
 {literal}
 jQuery(function($){
 
@@ -98,7 +103,7 @@ $('#editor').submit(function() {
      cj().crmAPI('participant','create',{'event_id': event_id, 'contact_id':contact_id,'status_id':2,'role_id':$('#role_id').val()},
      {'callBack': function(re,opt){
         $('#id').val(re.id);
-     }});
+     },'ajaxURL':options.ajaxURL});
     }
   });
 
@@ -115,19 +120,19 @@ $('.live-attended').click(function() {
      
 //      if(result.is_error =1)
   
-  }});
+  },'ajaxURL':options.ajaxURL});
 });
 $('#role_id').change(function(){
   cj().crmAPI('participant','create',{id:$('#id').val(),role_id:$(this).val()}
     ,{'callBack':function(result,setting){
 //      if(result.is_error =1)
-  }}); 
+  },'ajaxURL':options.ajaxURL}); 
 });
 $('#country_id').change(function(){
  $('#badge_country').html($('#country_id option:selected').text());
  var address_id = $('#address_id').val();
  if (address_id) 
-   cj().crmAPI('Address','update',{'id':address_id,'country_id':$('#country_id').val()});
+   cj().crmAPI('Address','update',{'id':address_id,'country_id':$('#country_id').val()},options);
  else 
    $('#restmsg').html('Country not saved');
 }); 
@@ -159,7 +164,7 @@ $('#last_name').blur(function() {
          });
 
        });
-     }}
+     },'ajaxURL':options.ajaxURL}
    );
  }
 });
@@ -196,14 +201,14 @@ name
 
 <img class='background' src='/{$tttp_root}/images/Badge/participant.jpg' />
 
-<div id="display_name"><span id="badge_first_name">AAA</span> <span id="badge_last_name"></span></div>
-<div id="second"><span id="badge_organization_name">BB</span> ,<span id="badge_country"></span></div>
+<div id="display_name"><span id="badge_first_name">Name</span> <span id="badge_last_name"></span></div>
+<div id="second"><span id="badge_organization_name">Organisation</span>, <span id="badge_country"></span></div>
 </div>
 
 
 <form id="editor">
 <input id="contact_id" type="hidden" class="dyn-field" />
-<input name="address" id="address_id" class="adyn-field" />
+<input name="address" type="hidden" id="address_id" class="adyn-field" />
 <label>Last name</label>
 <input id="last_name" class="dyn-field"/>
 <div id="found_contacts">Is this the contact?<ul id="list_contact"></ul></div>

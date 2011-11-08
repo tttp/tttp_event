@@ -27,7 +27,7 @@
 function tttp_listing_civicrm_config(&$config) {
   $folder= drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.5';
   // 3.3.5 or so (at least < 3.4)
-  $config->old = file_exists ($_SERVER{'DOCUMENT_ROOT'} . $folder);
+  $config->old = file_exists ($_SERVER{'DOCUMENT_ROOT'} .'/'. $folder);
   $path = drupal_get_path('module', 'tttp_listing');
   // we put our module before civicrm, so in case of conflict in between the core and us, we win
   set_include_path($path .  PATH_SEPARATOR .get_include_path() );
@@ -64,8 +64,8 @@ function tttp_listing_event_live ($event_id = null) {
   $config =& CRM_Core_Config::singleton();
   drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
   if ($config->old) {
-    drupal_add_css(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.5.custom.css', 'module','all', FALSE));
-    drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/js/jquery-ui-1.8.5.custom.min.js','module','header',FALSE,FALSE,FALSE);
+    drupal_add_css(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.11.custom.css', 'module','all', FALSE);
+    drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js','module','header',FALSE,FALSE,FALSE);
 //    drupal_add_js($data = NULL, $type = 'module', $scope = 'header', $defer = FALSE, $cache = TRUE, $preprocess = TRUE)
     drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/development-bundle/ui/jquery.ui.autocomplete.js','module','header',FALSE,FALSE,FALSE);
 //<script src="/sites/all/modules/civicrm/packages/jquery/jquery.js"></script>
