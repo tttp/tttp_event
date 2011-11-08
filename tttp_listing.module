@@ -64,9 +64,10 @@ function tttp_listing_event_live ($event_id = null) {
   $config =& CRM_Core_Config::singleton();
   drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
   if ($config->old) {
-    drupal_add_css(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.5.custom.css');
-    drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/js/jquery-ui-1.8.5.custom.min.js');
-    drupal_add_js(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/development-bundle/ui/jquery.ui.autocomplete.js');
+    drupal_add_css(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.5.custom.css', 'module','all', FALSE));
+    drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/js/jquery-ui-1.8.5.custom.min.js','module','header',FALSE,FALSE,FALSE);
+//    drupal_add_js($data = NULL, $type = 'module', $scope = 'header', $defer = FALSE, $cache = TRUE, $preprocess = TRUE)
+    drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/development-bundle/ui/jquery.ui.autocomplete.js','module','header',FALSE,FALSE,FALSE);
 //<script src="/sites/all/modules/civicrm/packages/jquery/jquery.js"></script>
   } else {
     drupal_add_css(drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.11.custom.css');
