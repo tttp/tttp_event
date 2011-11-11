@@ -5,6 +5,16 @@ left:500px;
 }
 #badge .background {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1}
 
+#restmsg.msgnok, span.msgnok {
+    display:block;
+    background:yellow;
+    background-color:yellow;
+    border:1px solid red;
+    color:red;
+    font-size:12px;
+    margin:0 0 8px;
+    padding:4px;
+}
 
 
 #display_name {display:absolute;font-size:20px;margin-top:20mm;text-align:left;z-index:10;position:relative;
@@ -131,7 +141,7 @@ $('#role_id').change(function(){
 $('#country_id').change(function(){
  $('#badge_country').html($('#country_id option:selected').text());
  var address_id = $('#address_id').val();
- if (address_id) 
+ if (address_id != 'undefined') 
    cj().crmAPI('Address','update',{'id':address_id,'country_id':$('#country_id').val()},options);
  else 
    $('#restmsg').html('Country not saved');
