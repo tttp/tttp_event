@@ -1,9 +1,14 @@
 {literal}
 <style>
-#badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:100px;
+
+@media screen {
+#badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:300px;
 left:500px;
 }
-#badge .background {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1}
+#badge img {visibility:hidden;}
+#badge .background {}
+#badge .active {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;visibility:visible}
+}
 
 #restmsg.msgnok, span.msgnok {
     display:block;
@@ -17,12 +22,14 @@ left:500px;
 }
 
 
-#display_name {display:absolute;font-size:20px;margin-top:20mm;text-align:left;z-index:10;position:relative;
-left:10mm;top:30mm;
+#display_name {display:block;font-size:20px;top:50mm;text-align:left;z-index:10;
+left:10mm;
+position:absolute;
 }
 #second{font-size:15px;top:60mm;
 left:10mm;
 text-align:left;z-index:10;position:absolute;}
+
 #editor input {display:block;}
 #editor {position:absolute;top:100px;left:0px}
 .live_event {position:relative;}
@@ -34,7 +41,9 @@ text-align:left;z-index:10;position:absolute;}
 #wrapper {height:100%;width:100%;border:1px solid pink;}
 
 @media print {
-	* { visibility:hidden;color:yellow;position:inherit;text-shadow:none;}
+  * {font-family:Helvetica, Arial, sans serif}
+	.container { visibility:hidden;text-shadow:none;}
+	aa* { visibility:hidden;text-shadow:none;}
   .crm-button {border:none!important;}
   body {height:297mm;width:210mm;position:absolute;top:0; left:0;}
 h1 {text-shadow:none;}
@@ -43,21 +52,19 @@ h1 {text-shadow:none;}
   #wrapper {position:inherit;}
 
   input {display:none;visibility:hidden;}
-/* 297-86 -10 = 201mm */
-   #abadge {display:block;position:absolute;top:201mm;left:0;visibility:visible;}
-   #badge {display:block;position:fixed;bottom:0mm;left:0mm;visibility:visible;}
-#badge * {display:block;visibility:visible;color:black;margin:0;}
 
-a* {position:fixed;top:0;width:100%!important;height:100%!important;}
-a#wrapper {height:297mm!important;width:210mm!important; border:2px solid green;left:0;top:0;visibility:visible;position:fixed}
-#badge {width:97mm!important;height:86mm!important}
+a#badge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
+a#badge * {visibility:visible;color:black;}
 
-#fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;}
-#fbadge * {display:block;visibility:visible;color:black;margin:0;}
+.fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
+aa#fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;}
+a.fbadge * {display:block;visibility:visible;color:black;margin:0;}
 
+#fbottom {display:block;visibility:visible;border:black 1px solid;height:1px;width:100% position:fixed;bottom:0;left:0}
 }
 
-#fbadge {visibility:hidden;}
+#fbottom {display:block;visibility:visible;border:black 1px solid;height:1px;width:100% position:fixed;bottom:0;left:0}
+
 
 .status_1 {}
 .status_2 {font-weight:bold;}
@@ -75,7 +82,13 @@ jQuery(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id','address_id'];
 
-$('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
+//('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
+//$('body').append ("<div class='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
+//$('.fbadge').appendTo ("body");
+//$('body').append ("<div id='fbottom'></div>");
+  $('#badge').addClass("fbadge").detach().appendTo('body');
+  setBackground (1);
+
      //label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
   participants = $.map( participants, function( item ){ 
     item.value = item.last_name+","+item.first_name;
@@ -86,12 +99,13 @@ $('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root 
   minLength: 0,
   source:participants,
   select: function( event, ui ) {
+    setBackground(ui.item['role_id']);
     $.each(fields, function(k,v){
-	$( "#"+v ).val( ui.item[v] );
-	$( "#badge_"+v ).html( ui.item[v] );
-	});
+	    $( "#"+v ).val( ui.item[v] );
+    	$( "#badge_"+v ).html( ui.item[v] );
+	  });
 //        return false;
-	}
+	  }
   })
     //item.label = "<span class=role_"+item.role_id+" status_"+item.status_id+">"+item.first_name+" "+item.last_name+"</span>";
 .data( "autocomplete" )._renderItem = function( ul, item ) {
@@ -129,7 +143,16 @@ $('#editor').submit(function() {
 
  return false;
 });
-$('.live-print').click(function() {window.print()});
+$('.live-print').click(function() {
+if (typeof jsPrintSetup == "object") {
+   jsPrintSetup.clearSilentPrint();
+   jsPrintSetup.setOption('printSilent', 1);
+   jsPrintSetup.print();
+} else {
+  window.print()}
+}
+
+);
 $('.live-attended').click(function() {
   var id=$('#id').val();
   var status_id=2;
@@ -142,11 +165,23 @@ $('.live-attended').click(function() {
   
   },'ajaxURL':options.ajaxURL});
 });
+
+function setBackground (role_id) {
+  $('#badge img').removeClass('active');
+  $('#badge img.role_'+role_id).addClass('active');
+  if ($('#badge img.role_'+role_id).length == 0) 
+    $('#defaultimg').addClass('active');
+
+}
+
 $('#role_id').change(function(){
-  cj().crmAPI('participant','create',{id:$('#id').val(),role_id:$(this).val()}
-    ,{'callBack':function(result,setting){
+  setBackground ($(this).val());
+  if ($('#id').val() >0) {
+    cj().crmAPI('participant','create',{id:$('#id').val(),role_id:$(this).val()}
+      ,{'callBack':function(result,setting){
 //      if(result.is_error =1)
-  },'ajaxURL':options.ajaxURL}); 
+     },'ajaxURL':options.ajaxURL}); 
+  }
 });
 $('#country_id').change(function(){
  $('#badge_country').html($('#country_id option:selected').text());
@@ -197,6 +232,40 @@ $('#editor').hide();
 $('#found_contacts').hide();
 
 });
+
+
+if (typeof jsPrintSetup == "object") {
+   // set portrait orientation
+   jsPrintSetup.setOption('orientation', jsPrintSetup.kPortraitOrientation);
+   // set top margins in millimeters
+   jsPrintSetup.setOption('shrinkToFit', false);
+   jsPrintSetup.setOption('startPageRange', 1);
+   jsPrintSetup.setOption('printRange', 1);
+   jsPrintSetup.setOption('startPageRange', 1);
+   jsPrintSetup.setOption('endPageRange', 1);
+   jsPrintSetup.setOption('marginTop', 20);
+   jsPrintSetup.setOption('marginBottom', 20);
+   jsPrintSetup.setOption('marginLeft', 8);
+   jsPrintSetup.setOption('marginRight', 8);
+   // set page header
+   jsPrintSetup.setOption('headerStrLeft', "Print Convention");
+   jsPrintSetup.setOption('headerStrCenter', '');
+   jsPrintSetup.setOption('headerStrRight', '&PT');
+   // set empty page footer
+   jsPrintSetup.setOption('footerStrLeft', '');
+   jsPrintSetup.setOption('footerStrCenter', '');
+   jsPrintSetup.setOption('footerStrRight', '');
+   // clears user preferences always silent print value
+   // to enable using 'printSilent' option
+   jsPrintSetup.clearSilentPrint();
+   // Suppress print dialog (for this context only)
+   jsPrintSetup.setOption('printSilent', 1);
+   // Do Print 
+   // When print is submitted it is executed asynchronous and
+   // script flow continues after print independently of completetion of print process! 
+ //  jsPrintSetup.print();
+   // next commands
+}
 {/literal}
 </script>
 <div id='crm-container' class='live_event'>
@@ -219,10 +288,13 @@ name
 </ul>
 <div id="badge">
 
-<img class='background' src='/{$tttp_root}/images/Badge/participant.jpg' />
+<img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.jpg' />
+<img class='background role_3' src='/{$tttp_root}/images/Badge/staff.jpg' />
+<img class='background role_8 role_10' src='/{$tttp_root}/images/Badge/tech.jpg' />
+<img class='background role_7 role_11' src='/{$tttp_root}/images/Badge/press.jpg' />
 
-<div id="display_name"><span id="badge_first_name">Name</span> <span id="badge_last_name"></span></div>
-<div id="second"><span id="badge_organization_name">Organisation</span>, <span id="badge_country"></span></div>
+<div id="display_name"><span id="badge_first_name">First name</span> <span id="badge_last_name">Last Name</span></div>
+<div id="second"><span id="badge_organization_name">Organisation</span>, <span id="badge_country">Country</span></div>
 </div>
 
 
