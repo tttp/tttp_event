@@ -5,10 +5,12 @@
 #badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:300px;
 left:500px;
 }
+
+}
+
 #badge img {visibility:hidden;}
 #badge .background {}
 #badge .active {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;visibility:visible}
-}
 
 #restmsg.msgnok, span.msgnok {
     display:block;
@@ -55,6 +57,7 @@ h1 {text-shadow:none;}
 
 a#badge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
 a#badge * {visibility:visible;color:black;}
+a#badge img {visibility:hidden;}
 
 .fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
 aa#fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;}
