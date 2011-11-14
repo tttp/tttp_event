@@ -36,7 +36,7 @@ text-align:left;z-index:10;position:absolute;}
 @media print {
 	* { visibility:hidden;color:yellow;position:inherit;text-shadow:none;}
   .crm-button {border:none!important;}
-
+  body {height:297mm;width:210mm;position:absolute;top:0; left:0;}
 h1 {text-shadow:none;}
 
   #logo {display:none;}
@@ -44,11 +44,20 @@ h1 {text-shadow:none;}
 
   input {display:none;visibility:hidden;}
 /* 297-86 -10 = 201mm */
-   #badge {display:block;position:absolute;top:201mm;left:0;visibility:visible;}
+   #abadge {display:block;position:absolute;top:201mm;left:0;visibility:visible;}
+   #badge {display:block;position:fixed;bottom:0mm;left:0mm;visibility:visible;}
 #badge * {display:block;visibility:visible;color:black;margin:0;}
 
-#wrapper {height:297mm;width:210mm; border:2px solid green;left:0;top:0;}
+a* {position:fixed;top:0;width:100%!important;height:100%!important;}
+a#wrapper {height:297mm!important;width:210mm!important; border:2px solid green;left:0;top:0;visibility:visible;position:fixed}
+#badge {width:97mm!important;height:86mm!important}
+
+#fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;}
+#fbadge * {display:block;visibility:visible;color:black;margin:0;}
+
 }
+
+#fbadge {visibility:hidden;}
 
 .status_1 {}
 .status_2 {font-weight:bold;}
@@ -60,12 +69,13 @@ var event_id={$event->id};
 var options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
        ,closetxt:'<div class="ui-icon ui-icon-close" style="float:left"></div>'{rdelim};
 
-
+var tttp_root = '{$tttp_root}';
 {literal}
 jQuery(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id','address_id'];
 
+$('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
      //label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
   participants = $.map( participants, function( item ){ 
     item.value = item.last_name+","+item.first_name;
