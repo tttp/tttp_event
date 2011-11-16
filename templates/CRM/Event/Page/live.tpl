@@ -45,7 +45,6 @@ text-align:left;z-index:10;position:absolute;}
 @media print {
   * {font-family:Helvetica, Arial, sans serif}
 	.container { visibility:hidden;text-shadow:none;}
-	aa* { visibility:hidden;text-shadow:none;}
   .crm-button {border:none!important;}
   body {height:297mm;width:210mm;position:absolute;top:0; left:0;}
 h1 {text-shadow:none;}
@@ -55,25 +54,25 @@ h1 {text-shadow:none;}
 
   input {display:none;visibility:hidden;}
 
-a#badge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
-a#badge * {visibility:visible;color:black;}
-a#badge img {visibility:hidden;}
-
-.fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
-aa#fbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;}
-a.fbadge * {display:block;visibility:visible;color:black;margin:0;}
-
-#fbottom {display:block;visibility:visible;border:black 1px solid;height:1px;width:100% position:fixed;bottom:0;left:0}
+.fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;
 }
 
-#fbottom {display:block;visibility:visible;border:black 1px solid;height:1px;width:100% position:fixed;bottom:0;left:0}
+.vbadge {left:auto;right:0;}
 
+//#fbottom {position:fixed;display:block;visibility:visible;border:black 1px solid;height:100%;width:100% position:fixed;top:0;right:0;bottom:0;left:0}
+#fbottom {position:fixed;display:block;visibility:visible;border:black 1px solid;top:0;right:0;bottom:0;left:0}
+}
+
+.fbadge *, .vbadge * {text-transform:uppercase}
+//#fbottom {display:block;visibility:visible;border:black 1px solid;height:1px;width:100% position:fixed;bottom:0;left:0}
+#fbottom {position:fixed;display:block;visibility:visible;border:black 1px solid;}
 
 .status_1 {}
 .status_2 {font-weight:bold;}
 </style>
 {/literal}
 <script>
+var margin = [20,9,20,9];
 var participants={$participants_json};
 var event_id={$event->id};
 var options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
@@ -81,14 +80,44 @@ var options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
 
 var tttp_root = '{$tttp_root}';
 {literal}
+var urlParams = {};
+(function () {
+    var e,
+        a = /\+/g,  // Regex for replacing addition symbol with a space
+        r = /([^&=]+)=?([^&]*)/g,
+        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+        q = window.location.search.substring(1);
+
+    while (e = r.exec(q))
+       urlParams[d(e[1])] = d(e[2]);
+})();
+
+if (urlParams['margin']) {
+  var tmp = urlParams['margin'].split(",",4);
+  for (i=0;i<=3;i++) {
+    if (isNaN(tmp[i])) {
+      alert ("invalid margin, should be '&margin=top,right,bottom,left' eg. margin=20,9,20,9");
+      break;
+    }
+    margin [i]= tmp [i];
+  }
+}
+
 jQuery(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id','address_id'];
 
+  if (urlParams['debug']) {
+    document.title = "Participant " + new Date();
+    $('#restmsg').text('margin:'+margin);
+
+  }
+
 //('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
 //$('body').append ("<div class='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
 //$('.fbadge').appendTo ("body");
-//$('body').append ("<div id='fbottom'></div>");
+$('body').append ("<div id='fbottom'></div>");
+$('body').append ("<div class='vbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
   $('#badge').addClass("fbadge").detach().appendTo('body');
   setBackground (1);
 
@@ -103,6 +132,7 @@ jQuery(function($){
   source:participants,
   select: function( event, ui ) {
     setBackground(ui.item['role_id']);
+    document.title = ui.item['last_name']+ " "+ ui.item['first_name'];
     $.each(fields, function(k,v){
 	    $( "#"+v ).val( ui.item[v] );
     	$( "#badge_"+v ).html( ui.item[v] );
@@ -246,12 +276,16 @@ if (typeof jsPrintSetup == "object") {
    jsPrintSetup.setOption('printRange', 1);
    jsPrintSetup.setOption('startPageRange', 1);
    jsPrintSetup.setOption('endPageRange', 1);
-   jsPrintSetup.setOption('marginTop', 20);
+/*   jsPrintSetup.setOption('marginTop', 20);
    jsPrintSetup.setOption('marginBottom', 20);
    jsPrintSetup.setOption('marginLeft', 8);
-   jsPrintSetup.setOption('marginRight', 8);
+   jsPrintSetup.setOption('marginRight', 8);*/
+   jsPrintSetup.setOption('marginTop', margin[0]);
+   jsPrintSetup.setOption('marginRight', margin[1]);
+   jsPrintSetup.setOption('marginBottom', margin[2]);
+   jsPrintSetup.setOption('marginLeft', margin[3]);
    // set page header
-   jsPrintSetup.setOption('headerStrLeft', "Print Convention");
+   jsPrintSetup.setOption('headerStrLeft', "Print Badge ");
    jsPrintSetup.setOption('headerStrCenter', '');
    jsPrintSetup.setOption('headerStrRight', '&PT');
    // set empty page footer
