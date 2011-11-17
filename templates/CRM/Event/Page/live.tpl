@@ -172,6 +172,13 @@ $('#editor').submit(function() {
 });
 
 $('.live-print').click(function() {
+  if ($('#display_name').height() >50) {
+     // name on two lines
+     $('#display_name').css('top','45mm');
+  } else {
+     $('#display_name').css('top','50mm');
+  }
+
   $('#vbadge').html($('#badge').html());
   if (typeof jsPrintSetup == "object") {
      $('#restmsg').html( "printing on ..."+jsPrintSetup.getPrinter());
