@@ -52,8 +52,8 @@ text-align:left;z-index:10;position:absolute;}
   #wrapper {position:inherit;}
   input {display:none;visibility:hidden;}
 
-  .fbadge,.vbadge {width:96mm!important;height:86mm!important;position:fixed;bottom:1px;left:0;visibility:visible!important;display:block;}
-  .fbadge img,.vbadge img {width:96mm;height:86mm} /* 97 x 86 */
+  .fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
+  .fbadge img,.vbadge img {width:97mm;height:86mm} /* 97 x 86 */
   .vbadge {left:auto;right:0;}
   .role_3 * {color:white!important}
 
