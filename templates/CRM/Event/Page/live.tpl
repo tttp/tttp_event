@@ -40,6 +40,7 @@ text-align:left;z-index:10;position:absolute;}
   #badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:300px;left:555px;}
   #vbadge {visibility:hidden;position:absolute;top:300px;left:555px;height:1px;width:1px;}
 #badge img,#vbadge img{visibility:hidden;width:100px;height:100px;}
+#b1,#b2 {visibility:hidden;}
 }
 
 @media print {
@@ -52,17 +53,26 @@ text-align:left;z-index:10;position:absolute;}
   #wrapper {position:inherit;}
   input {display:none;visibility:hidden;}
 
-  .fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
-  .fbadge img,.vbadge img {width:97mm;height:86mm} /* 97 x 86 */
-  .vbadge {left:auto;right:0;}
-  .role_3 * {color:white!important}
+/*  .fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}*/
+  .fbadge,.vbadge {width:50%!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
+  .fbadge img,.vbadge img {width:50%;height:86mm} 
+  .vbadge {left:auto;right:0;} */
+
+  
+
+  .role_3 * {font-weight:bold;} /* dear firefox, why are you ignoring color:#fff but that #f00 is fine? */
 
   #all {position:fixed;display:block;visibility:visible;border:black 1px solid;top:0;right:0;bottom:0;left:0}
   #half {position:fixed;display:block;visibility:visible;border:black 1px solid;top:0;left:0;bottom:0;width:50%;}
+
+#b1,#b2 {position:fixed;top:50mm;left:0mm;width:50%;height:86mm;border:1px solid red;}
+#b1 img,#b2 img {width:97mm;height:86mm;display:none;position:absolute;}
+#b2 {position:fixed;top:40mm;left:50%; border:1px solid green;}
+
 }
 
 .fbadge *, .vbadge * {text-transform:uppercase}
-.role_3 * {color:white}
+.role_3 * {color:#000}
 
 .status_1 {}
 .status_2 {font-weight:bold;}
@@ -109,6 +119,11 @@ jQuery(function($){
     $('#restmsg').text('margin:'+margin);
     $('body').append ("<div id='all'></div>");
     $('body').append ("<div id='half'></div>");
+    $('body').append ("<div id='b1'><img src='/"+ tttp_root+"/images/Badge/tech.jpg'/> </div>");
+    $('body').append ("<div id='b2'><img src='/"+ tttp_root+"/images/Badge/staff.jpg'/> </div>");
+
+
+    $('body').append ("<div id='b2'></div>");
   }
 
 //('body').append ("<div id='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
@@ -172,6 +187,7 @@ $('#editor').submit(function() {
 });
 
 $('.live-print').click(function() {
+  jsPrintSetup.setOption('footerStrLeft', '#'+$('#id').val());
   if ($('#display_name').height() >50) {
      // name on two lines
      $('#display_name').css('top','45mm');
