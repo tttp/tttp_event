@@ -41,6 +41,7 @@ text-align:left;z-index:10;position:absolute;}
   #vbadge {visibility:hidden;position:absolute;top:300px;left:555px;height:1px;width:1px;}
 #badge img,#vbadge img{visibility:hidden;width:100px;height:100px;}
 #b1,#b2 {visibility:hidden;}
+#message  {display:none;}
 }
 
 @media print {
@@ -52,7 +53,7 @@ text-align:left;z-index:10;position:absolute;}
   #logo {display:none;}
   #wrapper {position:inherit;}
   input {display:none;visibility:hidden;}
-
+  #message {position:absolute;top:30px; left:10px;font-size:18px;display:block;}
 /*  .fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}*/
   .fbadge,.vbadge {width:50%!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
   .fbadge img,.vbadge img {width:50%;height:86mm} 
@@ -65,7 +66,7 @@ text-align:left;z-index:10;position:absolute;}
   #all {position:fixed;display:block;visibility:visible;border:black 1px solid;top:0;right:0;bottom:0;left:0}
   #half {position:fixed;display:block;visibility:visible;border:black 1px solid;top:0;left:0;bottom:0;width:50%;}
 
-#b1,#b2 {position:fixed;top:50mm;left:0mm;width:50%;height:86mm;border:1px solid red;}
+#b1,#b2 {position:fixed;top:50mm;left:0mm;width:97mm;height:86mm;border:1px solid red;}
 #b1 img,#b2 img {width:97mm;height:86mm;display:none;position:absolute;}
 #b2 {position:fixed;top:40mm;left:50%; border:1px solid green;}
 
@@ -79,7 +80,7 @@ text-align:left;z-index:10;position:absolute;}
 </style>
 {/literal}
 <script>
-var margin = [20,9,20,9];
+var margin = [20,8,20,8];
 var participants={$participants_json};
 var event_id={$event->id};
 var options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
@@ -130,6 +131,7 @@ jQuery(function($){
 //$('body').append ("<div class='fbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
 //$('.fbadge').appendTo ("body");
   $('#badge').addClass("fbadge").detach().appendTo('body');
+  $('#message').detach().appendTo('body');
   $('body').append ("<div id='vbadge' class='vbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
   setBackground (1);
 
@@ -203,6 +205,14 @@ $('.live-print').click(function() {
      jsPrintSetup.print();
   } else {
     window.print()}
+  // flag as attended
+  var id=$('#id').val();
+  var status_id=2;
+  $('#restmsg').html('<i>saving...</i>');
+  cj().crmAPI('participant','create',{id:id,status_id:status_id}
+    ,{'callBack':function(result,setting){
+     contact_id=result.id;
+  },'ajaxURL':options.ajaxURL});
 });
 
 $('.live-attended').click(function() {
@@ -326,6 +336,10 @@ if (typeof jsPrintSetup == "object") {
 }
 {/literal}
 </script>
+<div id="message">
+Please do keep your badge for the duration of the convention.
+</div>
+
 <div id='crm-container' class='live_event'>
 <div>
 <div id="restmsg">&nbsp;</div>
@@ -351,8 +365,8 @@ name
 <img class='background role_8 role_10' src='/{$tttp_root}/images/Badge/tech.jpg' />
 <img class='background role_7 role_11' src='/{$tttp_root}/images/Badge/press.jpg' />
 
-<div id="display_name"><span id="badge_first_name">First name</span> <span id="badge_last_name">Last Name</span></div>
-<div id="second"><span id="badge_organization_name">Organisation</span><span class='separator'>>,</span><span id="badge_country">Country</span></div>
+<div id="display_name"><span id="badge_first_name"></span> <span id="badge_last_name"></span></div>
+<div id="second"><span id="badge_organization_name"></span><span class='separator'>,</span><span id="badge_country"></span></div>
 </div>
 
 
