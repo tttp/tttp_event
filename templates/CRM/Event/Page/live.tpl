@@ -164,7 +164,10 @@ jQuery(function($){
 $('#editor').submit(function() {
    var values={};
    $('#editor .dyn-field').each(function(){
-      values[this.id] = $(this).val();
+      var v=$(this).val();
+      if (v.length >0) {
+        values[this.id] = v;
+      }
    });
    if (values['contact_id'])
      values['id']=values['contact_id'];
@@ -260,20 +263,21 @@ $('#country_id').change(function(){
 
 $('#last_name').blur(function() {
  if (!$('contact_id').val()) {
-   cj().crmAPI('Contact','get',{'contact_type':'Individual','last_name':$('#last_name').val()+"%",'return':"contact_id,last_name,first_name,sort_name,current_employer,country_id,country"},
+   cj().crmAPI('Contact','get',{'contact_type':'Individual','last_name':$('#last_name').val()+"%",'return':"contact_id,last_name,first_name,sort_name,current_employer,country_id,country,email"},
      {'callBack':function(result,setting) {
        if (result.count=0)
          return;
        $('#found_contacts').show();
        html ='';
        $.each(result.values, function(k,v){
-          html = html + "<li data-contact_id='"+v.contact_id+"' data-address_id='"+v.address_id+ "' data-country_id='"+v.country_id+"'><span class='last_name'>"+v.last_name
+          html = html + "<li data-contact_id='"+v.contact_id+"' data-address_id='"+v.address_id+ "' data-country_id='"+v.country_id+"' data-email='"+v.email+"'><span class='last_name'>"+v.last_name
   +"</span>, <span class='first_name'>"+v.first_name + '</span> <span class="organization_name">'+ v.current_employer
   +'</span></li>';
        });
        $('#list_contact').html(html);
        $('#list_contact li').click(function(){
          $('#contact_id').val($(this).data('contact_id'));
+         $('#email').val($(this).data('email'));
          $('#country_id').val($(this).data('country_id'));
          $('#address_id').val($(this).data('address_id'));
          $('#first_name').val($(this).find('.first_name').text());
@@ -380,8 +384,8 @@ name
 <input id="first_name" class="dyn-field"/>
 <label>Organisation</label>
 <input id="organization_name" class="dyn-field"/>
-<!--label>Email</label>
-<input id="email" class="dyn-field"/-->
+<label>Email</label>
+<input id="email" class="dyn-field" />
 <label>Country</label><br/>
 {crmAPI var="Countries" entity="Constant" action="get" version="3" name="country" }
 <select name="country" id="country_id" class="adyn-field">
