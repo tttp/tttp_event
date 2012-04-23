@@ -30,7 +30,8 @@ text-align:left;z-index:10;position:absolute;}
 #editor {position:absolute;top:100px;left:0px}
 .live_event {position:relative;}
 #crm-container .ac_input {width:10em;z-index:20}
-.ui-widget-content {background:white}
+
+.ui-autocomplete {background:white;z-index:10000;}
 
 #crm-container .crm-actions-ribbon li {padding:2px 10px;}
 
@@ -113,7 +114,7 @@ if (urlParams['margin']) {
 
 jQuery(function($){
 
-  var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','role_id','address_id'];
+  var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','email','role_id','address_id'];
 
   if (urlParams['debug']) {
     document.title = "Participant " + new Date();
@@ -143,13 +144,16 @@ jQuery(function($){
   $('#participant').autocomplete({
   minLength: 0,
   source:participants,
+  open: function (event,ui) {
+     $('.ui-autocomplete').css("z-index",1000000);
+  },
   select: function( event, ui ) {
     setBackground(ui.item['role_id']);
     document.title = ui.item['last_name']+ " "+ ui.item['first_name'];
     $.each(fields, function(k,v){
 	    $( "#"+v ).val( ui.item[v] );
     	$( "#badge_"+v ).html( ui.item[v] );
-	  });
+	  })
 //        return false;
 	  }
   })
@@ -261,7 +265,7 @@ $('#country_id').change(function(){
    $('#restmsg').html('Country not saved');
 }); 
 
-$('#last_name').blur(function() {
+$('disable #last_name').blur(function() {
  if (!$('contact_id').val()) {
    cj().crmAPI('Contact','get',{'contact_type':'Individual','last_name':$('#last_name').val()+"%",'return':"contact_id,last_name,first_name,sort_name,current_employer,country_id,country,email"},
      {'callBack':function(result,setting) {
@@ -298,7 +302,7 @@ $('.live-new').click(function() {$('#editor').fadeIn();$('.dyn-field').val('')})
 $('.dyn-field').keyup(function() { // .change doesn't work?
  $('#badge_'+this.id).html($(this).val());
 });
-$('#editor').hide();
+//$('#editor').hide();
 $('#found_contacts').hide();
 
 });
@@ -341,7 +345,7 @@ if (typeof jsPrintSetup == "object") {
 {/literal}
 </script>
 <div id="message">
-Please do keep your badge for the duration of the convention.
+Please do keep your badge for the duration of the event
 </div>
 
 <div id='crm-container' class='live_event'>
@@ -350,24 +354,15 @@ Please do keep your badge for the duration of the convention.
 name 
 	<input name="participant" id="participant" class="ac_input" />
 ({$total} participants)
-<input id="id" type="hidden" value="" class="dyn-field">
 	</div>
 	<ul class='crm-actions-ribbon'><li class='crm-button live-attended'><span>Attended!</span></li>
 	<li  class='crm-button live-print'><span>Print</span></li>
 	<li  class='crm-button live-new'><span>New</span></li>
-	<li class='crm-button live-edit'><span>Edit</span></li>
-	<li> <select id='role_id'>
-{foreach from=$role  item=role}
-<option id="role_{$role->value}" value="{$role->value}">{$role->label}</option>
-{/foreach}
-</select></li>
+	<!--li class='crm-button live-edit'><span>Edit</span></li-->
 </ul>
 <div id="badge">
 
-<img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.jpg' />
-<img class='background role_3' src='/{$tttp_root}/images/Badge/staff.jpg' />
-<img class='background role_8 role_10' src='/{$tttp_root}/images/Badge/tech.jpg' />
-<img class='background role_7 role_11' src='/{$tttp_root}/images/Badge/press.jpg' />
+<img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.gif' />
 
 <div id="display_name"><span id="badge_first_name"></span> <span id="badge_last_name"></span></div>
 <div id="second"><span id="badge_organization_name"></span><span class='separator'>,</span><span id="badge_country"></span></div>
@@ -375,13 +370,20 @@ name
 
 
 <form id="editor">
+<label>participant ID</label>
+<input id="id" type="text" value="" class="dyn-field">
+<select id='role_id'>
+{foreach from=$role  item=role}
+<option id="role_{$role->value}" value="{$role->value}">{$role->label}</option>
+{/foreach}
+</select><br/>
 <input id="contact_id" type="hidden" class="dyn-field" />
 <input name="address" type="hidden" id="address_id" class="adyn-field" />
+<label>First name</label>
+<input id="first_name" class="dyn-field"/>
 <label>Last name</label>
 <input id="last_name" class="dyn-field"/>
 <div id="found_contacts">Is this the contact?<ul id="list_contact"></ul></div>
-<label>First name</label>
-<input id="first_name" class="dyn-field"/>
 <label>Organisation</label>
 <input id="organization_name" class="dyn-field"/>
 <label>Email</label>
