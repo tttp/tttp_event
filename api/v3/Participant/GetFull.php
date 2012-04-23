@@ -1,8 +1,12 @@
 <?
 
 function civicrm_api3_participant_getfull ($param) {
-  $query= "select civicrm_participant.id, event_id,civicrm_participant.contact_id,status_id, role_id,first_name,last_name, job_title, organization_name, employer_id, civicrm_address.id as address_id, civicrm_country.id as country_id, civicrm_country.name as country from civicrm_participant join civicrm_contact on civicrm_contact.id=contact_id left join civicrm_address on civicrm_address.contact_id = civicrm_contact.id and is_primary=1 left join civicrm_country on civicrm_country.id = country_id";
-
+  $query= "SELECT civicrm_participant.id, event_id,civicrm_participant.contact_id,status_id, role_id,first_name,last_name, job_title, organization_name, employer_id, civicrm_address.id as address_id, civicrm_country.id as country_id, civicrm_country.name as country
+    FROM civicrm_participant 
+    JOIN civicrm_contact on civicrm_contact.id= civicrm_participant.contact_id 
+    LEFT JOIN civicrm_address on civicrm_address.contact_id = civicrm_contact.id and is_primary=1 
+    LEFT JOIN civicrm_country on civicrm_country.id = country_id 
+    LEFT JOIN civicrm_email ON civicrm_email.contact_id = civicrm_participant.contact_id AND civicrm_email.is_primary=1";
   if (array_key_exists ('event_id',$param)) {
     $event_id= (int) $param['event_id'] ;
     $query .= " WHERE event_id = $event_id";
