@@ -348,6 +348,8 @@ if (typeof jsPrintSetup == "object") {
    // script flow continues after print independently of completetion of print process! 
  //  jsPrintSetup.print();
    // next commands
+} else {
+    $('#restmsg').text('For best results, use Firefox and install <a href="http://jsprintsetup.mozdev.org/">jsprintsetup</a>');
 }
 {/literal}
 </script>
