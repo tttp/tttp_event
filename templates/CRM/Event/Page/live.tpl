@@ -136,7 +136,7 @@ jQuery(function($){
   setBackground (1);
 
   participants = $.map( participants, function( item ){ 
-    item.value = item.last_name+","+item.first_name;
+    item.value = item.last_name+","+item.first_name + " "+item.organization_name;
     return item;
   });
 
