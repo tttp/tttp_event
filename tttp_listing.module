@@ -76,7 +76,7 @@ function tttp_listing_event_live ($event_id = null) {
   }
 
   drupal_add_js(drupal_get_path('module', 'civicrm') . '/../js/rest.js');
-    drupal_add_css(drupal_get_path('module', 'tttp_listing') . '/js/jquery.qrcode.min.js', 'module','all', FALSE);
+    drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery.qrcode.min.js');
 
 
   //drupal_add_js(drupal_get_path('module', 'civicrm') . '/../css/deprecate.css');

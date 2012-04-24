@@ -3,7 +3,7 @@
 
 #badge img,#vbadge img{visibility:hidden;}
 #badge .active,#vbadge .active {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;visibility:visible}
-
+#qrcode {position:absolute;top:1mm;right:1mm;z-index:10}
 #editor {position:relative;z-index:1000;}
 #restmsg.msgnok, span.msgnok {
     display:block;
@@ -24,7 +24,7 @@ position:absolute;
 #second{font-size:15px;top:60mm;
 left:10mm;
 text-align:left;z-index:10;position:absolute;}
-.separator, #badge_country {display:none;}
+.separator, #aabadge_country {display:none;}
 
 #editor input {display:block;}
 #editor {position:absolute;top:100px;left:0px}
@@ -71,7 +71,6 @@ text-align:left;z-index:10;position:absolute;}
 #b1 img,#b2 img {width:97mm;height:86mm;display:none;position:absolute;}
 #b2 {position:fixed;top:40mm;left:50%; border:1px solid green;}
 
-}
 
 .fbadge *, .vbadge * {text-transform:uppercase}
 .role_3 * {color:#000}
@@ -150,6 +149,9 @@ jQuery(function($){
   select: function( event, ui ) {
     setBackground(ui.item['role_id']);
     document.title = ui.item['last_name']+ " "+ ui.item['first_name'];
+    window.location.hash = ui.item['id'];
+    jQuery('#qrcode').html('').qrcode({text:document.URL,width:78,height:78});
+
     $.each(fields, function(k,v){
 	    $( "#"+v ).val( ui.item[v] );
     	$( "#badge_"+v ).html( ui.item[v] );
@@ -167,6 +169,8 @@ jQuery(function($){
 
 $('#editor').submit(function() {
    var values={};
+    window.location.hash = ui.item['id'];
+   jQuery('#qrcode').html('').qrcode({text:document.URL,width:78,height:78});
    $('#editor .dyn-field').each(function(){
       var v=$(this).val();
       if (v.length >0) {
@@ -177,6 +181,12 @@ $('#editor').submit(function() {
      values['id']=values['contact_id'];
    else
      values['contact_type'] = 'Individual';
+//http://34.crm/civicrm/api/json?{%22entity%22:%22contact%22,%22action%22:%22create%22,%22contact_type%22:%22Individual%22,%22email%22:%22test@gogo.com%22,%22api.participant.create%22:{%22status_id%22:1,%22role_id%22:1,%22event_id%22:5},%22api.address.create%22:{%22location_type_id%22:1,%22country_id%22:1020}}
+   var address = {'location_type_id':1};
+   if (values['address_id'])
+     address['id']=values['address_id'];
+   address['country_id']=values['country__id'];
+   values['api.address.create'];
 
    cj().crmAPI('contact','create',values,
     {'callBack': function(re,opt){
@@ -185,11 +195,13 @@ $('#editor').submit(function() {
        if (participant_id) {
          return;
        }
+
        cj().crmAPI('participant','create',{'event_id': event_id, 'contact_id':contact_id,'status_id':2,'role_id':$('#role_id').val()},
        {'callBack': function(re,opt){
           $('#id').val(re.id);
        },'ajaxURL':options.ajaxURL});
       }
+
     });
 
    return false;
@@ -258,12 +270,7 @@ $('#role_id').change(function(){
 
 $('#country_id').change(function(){
  $('#badge_country').html($('#country_id option:selected').text());
- var address_id = $('#address_id').val();
- if (address_id != 'undefined') 
-   cj().crmAPI('Address','update',{'id':address_id,'country_id':$('#country_id').val()},options);
- else 
-   $('#restmsg').html('Country not saved');
-}); 
+});
 
 $('disable #last_name').blur(function() {
  if (!$('contact_id').val()) {
@@ -326,11 +333,11 @@ if (typeof jsPrintSetup == "object") {
    // set page header
    jsPrintSetup.setOption('headerStrLeft', "Help spread the news");
    jsPrintSetup.setOption('headerStrCenter', '');
-   jsPrintSetup.setOption('headerStrRight', 'Twitter hashtag #re_new');
+   jsPrintSetup.setOption('headerStrRight', 'Twitter hashtag');
    // set empty page footer
    jsPrintSetup.setOption('footerStrLeft', '');
    jsPrintSetup.setOption('footerStrCenter', 'Thanks for your participation');
-   jsPrintSetup.setOption('footerStrRight', 'http://www.pes.org/renew');
+//   jsPrintSetup.setOption('footerStrRight', 'http://www.pes.org/renew');
    // clears user preferences always silent print value
    // to enable using 'printSilent' option
    jsPrintSetup.clearSilentPrint();
@@ -354,6 +361,8 @@ Please do keep your badge for the duration of the event
 name 
 	<input name="participant" id="participant" class="ac_input" />
 ({$total} participants)
+<label>ID</label>
+<input id="id" type="text" value="" class="dyn-field">
 	</div>
 	<ul class='crm-actions-ribbon'><li class='crm-button live-attended'><span>Attended!</span></li>
 	<li  class='crm-button live-print'><span>Print</span></li>
@@ -361,17 +370,15 @@ name
 	<!--li class='crm-button live-edit'><span>Edit</span></li-->
 </ul>
 <div id="badge">
-
+<div id="qrcode"></div>
 <img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.gif' />
 
 <div id="display_name"><span id="badge_first_name"></span> <span id="badge_last_name"></span></div>
-<div id="second"><span id="badge_organization_name"></span><span class='separator'>,</span><span id="badge_country"></span></div>
+<div id="second"><span id="badge_organization_name"></span><span class='separator'>,</span><br><span id="badge_country"></span></div>
 </div>
 
 
 <form id="editor">
-<label>participant ID</label>
-<input id="id" type="text" value="" class="dyn-field">
 <select id='role_id'>
 {foreach from=$role  item=role}
 <option id="role_{$role->value}" value="{$role->value}">{$role->label}</option>
@@ -390,7 +397,7 @@ name
 <input id="email" class="dyn-field" />
 <label>Country</label><br/>
 {crmAPI var="Countries" entity="Constant" action="get" version="3" name="country" }
-<select name="country" id="country_id" class="adyn-field">
+<select name="country" id="country_id" class="dyn-field">
 <option value="">(choose)</option>
 {foreach from=$Countries.values key=id item=country}
 <option value="{$id}">{$country}</option>
