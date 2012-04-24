@@ -349,7 +349,7 @@ if (typeof jsPrintSetup == "object") {
  //  jsPrintSetup.print();
    // next commands
 } else {
-    $('#restmsg').text('For best results, use Firefox and install <a href="http://jsprintsetup.mozdev.org/">jsprintsetup</a>');
+    $('#restmsg').html('For best results, use Firefox and install <a href="http://jsprintsetup.mozdev.org/">jsprintsetup</a>');
 }
 {/literal}
 </script>
