@@ -62,7 +62,7 @@ function tttp_listing_event_live ($event_id = null) {
 
   civicrm_initialize();
   $config =& CRM_Core_Config::singleton();
-  drupal_add_js(drupal_get_path('module', 'civicrm') .'/../packages/jquery/jquery.js');
+  drupal_add_js(drupal_get_path('module', 'tttp_listing') .'/js/jquery.js');
   if ($config->old) {
     drupal_add_css(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/css/smoothness/jquery-ui-1.8.11.custom.css', 'module','all', FALSE);
     drupal_add_js(drupal_get_path('module', 'tttp_listing') . '/js/jquery-ui-1.8.11/js/jquery-ui-1.8.11.custom.min.js','module','header',FALSE,FALSE,FALSE);
@@ -132,7 +132,7 @@ function tttp_listing_civicrm_buildForm ( $formName, &$form ) {
   if ($formName  == "CRM_Event_Form_Search") {
     $tabletool="/".drupal_get_path('module', 'civi_export'). "/tabletools/media";
     $template = CRM_Core_Smarty::singleton( );
-    $template->assign ("tabletool",$tabletool);
+//    $template->assign ("tabletool",$tabletool);
     $dir = dirname(__FILE__). "/templates/";
     array_unshift ( $template->template_dir,$dir);
     $rows = &$template->get_template_vars('rows');
