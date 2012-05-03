@@ -124,7 +124,7 @@ if (urlParams['margin']) {
 }
 
 //jQuery(function($){
-cf(function($){
+cj(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','email','role_id','email_id','address_id'];
 
