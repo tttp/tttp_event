@@ -125,6 +125,9 @@ if (urlParams['margin']) {
   }
 }
 
+if (!typeof jQuery.fn.autocomplete == "function") {
+  jQuery = cj;
+}
 jQuery(function($){
 //cj(function($){
 
@@ -170,7 +173,7 @@ jQuery(function($){
 //data = "http://www.dutoit.info";
 //    jQuery(selector).html('').qrcode({text:data,width:78,height:78,typeNumber: 8,correctLevel: 0});
 
-    jQuery(selector).html('').qrcode({text:data,width:256,height:256,typeNumber: 10,correctLevel: 0,render:'image'});
+    jQuery(selector).html('').qrcode({text:data,width:512,height:512,typeNumber: 10,correctLevel: 0,render:'image'});
   };
 
   if (urlParams['debug']) {
