@@ -53,6 +53,7 @@ text-align:left;z-index:10;position:absolute;}
   #badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:300px;left:555px;}
   #vbadge {display:none;visibility:hidden;position:absolute;top:300px;left:855px;height:97mm;width:86mm;}
 #badge img,#vbadge img{visibility:hidden;width:100px;height:100px;}
+#badge #qrcode img,#vbadge #qrcode img{visibility:visible;width:78px;height:78px;}
 #b1,#b2 {visibility:hidden;}
 #message  {display:none;}
 }
@@ -70,6 +71,7 @@ text-align:left;z-index:10;position:absolute;}
 /*  .fbadge,.vbadge {width:97mm!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}*/
   .fbadge,.vbadge {width:50%!important;height:86mm!important;position:fixed;bottom:0;left:0;visibility:visible!important;display:block;}
   .fbadge img,.vbadge img {width:50%;height:86mm} 
+.fbadge #qrcode img, .vbadge #qrcode img{visibility:visible;width:78px;height:78px;}
   .vbadge {left:auto;right:0;} 
 
   
@@ -123,8 +125,8 @@ if (urlParams['margin']) {
   }
 }
 
-//jQuery(function($){
-cj(function($){
+jQuery(function($){
+//cj(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','email','role_id','email_id','address_id'];
 
@@ -143,12 +145,19 @@ cj(function($){
   };
 
   var qrcode = function (selector,contact) {
-    var data= "BEGIN:VCARD\nVERSION:3.0\nFN:"+contact.first_name+" "+contact.last_name;
+/*    var data= "BEGIN:VCARD\nVERSION:3.0\nFN:"+contact.first_name+" "+contact.last_name;
     if (contact.organization_name)
       data = data+"\nORG:"+contact.organization_name;
     if (contact.email)
       data = data + "\nEMAIL:"+contact.email;
-    data = data + "\nUID:"+contact.contact_id+"\nEND:VCARD";
+    data = data + "\nUID:"+contact.contact_id+"\nEND:VCARD";*/
+
+    var data="MECARD:N:"+contact.last_name+","+contact.first_name+';NOTE:'+contact.contact_id+';';
+    if (contact.organization_name)
+      data = data+"ORG:"+contact.organization_name+";";
+    if (contact.email)
+      data = data + "EMAIL:"+contact.email+";";
+    
     if (data.length > 119)
       alert ("too bid, qrcode not working");
 //34:4
@@ -158,8 +167,10 @@ cj(function($){
 //84:8
 //98:9
 //119:10
-data = "http://www.dutoit.info";
-    jQuery(selector).html('').qrcode({text:data,width:78,height:78,typeNumber: 6,correctLevel: 0});
+//data = "http://www.dutoit.info";
+//    jQuery(selector).html('').qrcode({text:data,width:78,height:78,typeNumber: 8,correctLevel: 0});
+
+    jQuery(selector).html('').qrcode({text:data,width:256,height:256,typeNumber: 10,correctLevel: 0,render:'image'});
   };
 
   if (urlParams['debug']) {
@@ -167,14 +178,14 @@ data = "http://www.dutoit.info";
     $('#restmsg').text('margin:'+margin);
     $('body').append ("<div id='all'></div>");
     $('body').append ("<div id='half'></div>");
-    $('body').append ("<div id='b1'><img src='/"+ tttp_root+"/images/Badge/participant.jpg'/> </div>");
-    $('body').append ("<div id='b2'><img src='/"+ tttp_root+"/images/Badge/participant.jpg'/> </div>");
+    $('body').append ("<div id='b1'><img src='/"+ tttp_root+"/images/Badge/participant.png'/> </div>");
+    $('body').append ("<div id='b2'><img src='/"+ tttp_root+"/images/Badge/participant.png'/> </div>");
     $('body').append ("<div id='b2'></div>");
   }
 
   $('#badge').addClass("fbadge").detach().appendTo('body');
   $('#message').detach().appendTo('body');
-  $('body').append ("<div id='vbadge' class='vbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.jpg' /></div>");
+  $('body').append ("<div id='vbadge' class='vbadge'><img class='background' src='/" + tttp_root + "/images/Badge/participant.png' /></div>");
   setBackground (1);
 
   participants = $.map( participants, function( item ){ 
@@ -496,11 +507,10 @@ name
 </ul>
 <div id="badge">
 <div id="qrcode" class="dyn-badge"></div>
-<img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.gif' />
+<img class='background role_1' id="defaultimg" src='/{$tttp_root}/images/Badge/participant.png' />
 
 <div id="display_name"><span id="badge_first_name" class="dyn-badge"></span> <span id="badge_last_name" class="dyn-badge"></span></div>
 <div id="second"><span id="badge_organization_name" class="dyn-badge"></span><span class='separator'>,</span><br><span id="badge_country" class="dyn-badge"></span></div>
-<div id="badge_id" class="dyn-badge"></div>
 </div>
 
 
