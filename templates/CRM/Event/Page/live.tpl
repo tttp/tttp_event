@@ -12,7 +12,7 @@
 
 #badge img,#vbadge img{visibility:hidden;}
 #badge .active,#vbadge .active {display:block;position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;visibility:visible}
-#qrcode {position:absolute;top:1mm;right:1mm;z-index:10}
+#qrcode {position:absolute;top:5mm;right:5mm;z-index:10}
 #editor {position:relative;z-index:1000;}
 #restmsg.msgnok, span.msgnok {
     display:block;
@@ -50,7 +50,7 @@ text-align:left;z-index:10;position:absolute;}
 #wrapper {height:100%;width:100%;border:1px solid pink;}
 
 @media screen {
-  #badge {border:1px solid;width:97mm;height:86mm;position:absolute;top:300px;left:555px;}
+  #badge {border:1px solid;width:97mm;height:85mm;position:absolute;top:300px;left:555px;}
   #vbadge {display:none;visibility:hidden;position:absolute;top:300px;left:855px;height:97mm;width:86mm;}
 #badge img,#vbadge img{visibility:hidden;width:100px;height:100px;}
 #badge #qrcode img,#vbadge #qrcode img{visibility:visible;width:78px;height:78px;}
