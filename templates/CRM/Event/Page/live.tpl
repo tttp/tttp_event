@@ -26,13 +26,15 @@
 }
 #toolview {position:absolute;left:300px;padding:10px 10px 10px 20px;background:white}
 
-#display_name {display:block;font-size:20px;top:50mm;text-align:left;z-index:10;
-left:10mm;
+#display_name {display:block;font-size:20px;top:50mm;
+text-align:center;z-index:10;
+left:5mm;
+right:5mm;
 position:absolute;
 }
 #second{font-size:15px;top:60mm;
-left:10mm;
-text-align:left;z-index:10;position:absolute;}
+left:5mm;right:5mm;
+text-align:center;z-index:10;position:absolute;}
 #badge_id {position:absolute;z-index:10;left:1mm;top:0mm;}
 
 .separator, #aabadge_country {display:none;}
@@ -125,11 +127,11 @@ if (urlParams['margin']) {
   }
 }
 
-if (!typeof jQuery.fn.autocomplete == "function") {
-  jQuery = cj;
+if (typeof cj.fn.qrcode == "undefined") {
+  cj = jQuery;
 }
-jQuery(function($){
-//cj(function($){
+//jQuery(function($){
+cj(function($){
 
   var fields=['first_name','last_name','country', 'country_id','organization_name','employer_id','id','contact_id','email','role_id','email_id','address_id'];
 
