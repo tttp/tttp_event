@@ -127,9 +127,9 @@ if (urlParams['margin']) {
   }
 }
 
-if (typeof cj.fn.qrcode == "undefined") {
-  cj = jQuery;
-}
+//if (typeof cj.fn.qrcode == "undefined") {
+//  cj = jQuery;
+//}
 //jQuery(function($){
 cj(function($){
 
