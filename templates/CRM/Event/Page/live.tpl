@@ -26,8 +26,9 @@
 }
 #toolview {position:absolute;left:300px;padding:10px 10px 10px 20px;background:white}
 
-#display_name {display:block;font-size:20px;top:50mm;
+#display_name {display:block;font-size:25px;top:40mm;
 text-align:center;z-index:10;
+
 left:5mm;
 right:5mm;
 position:absolute;
@@ -127,9 +128,6 @@ if (urlParams['margin']) {
   }
 }
 
-//if (typeof cj.fn.qrcode == "undefined") {
-//  cj = jQuery;
-//}
 //jQuery(function($){
 cj(function($){
 
@@ -206,6 +204,10 @@ cj(function($){
     $('#participant').val(participant.value);
     setParticipant (participant);
   }
+
+  if (typeof ($.fn.autocomplete) != "_renderItem")
+    $=jQuery;
+console.log ($.fn.autocomplete);
 
   $('#participant').autocomplete({
   minLength: 0,
